@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>For You 💝</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      background: linear-gradient(to right, #ffc3a0, #ffafbd);
+      font-family: 'Poppins', sans-serif;
+      color: #fff;
+      text-align: center;
+      overflow-y: auto;
+      overflow-x: hidden;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    /* Start overlay for music permission */
+    .start-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      backdrop-filter: blur(5px);
+    }
+
+    .start-content {
+      text-align: center;
+      color: white;
+      padding: 40px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 20px;
+      backdrop-filter: blur(10px);
+    }
+
+    .start-content h2 {
+      font-size: 2em;
+      margin-bottom: 20px;
+      color: #ffc3a0;
+    }
+
+    .start-content p {
+      font-size: 1.2em;
+      margin-bottom: 30px;
+      opacity: 0.9;
+    }
+
+    .start-button {
+      background: linear-gradient(45deg, #ff6ec4, #e255aa);
+      color: white;
+      border: none;
+      padding: 20px 40px;
+      border-radius: 50px;
+      font-size: 1.3em;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 10px 20px rgba(255, 110, 196, 0.3);
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+
+    .start-button:hover {
+      transform: scale(1.1);
+      box-shadow: 0 15px 30px rgba(255, 110, 196, 0.5);
+    }
+
+    /* Music control button */
+    .music-control {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: rgba(255, 255, 255, 0.9);
+      border: none;
+      border-radius: 50%;
+      width: 60px;
+      height: 60px;
+      cursor: pointer;
+      font-size: 1.5em;
+      z-index: 100;
+      transition: all 0.3s ease;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .music-control:hover {
+      transform: scale(1.1);
+      background: rgba(255, 255, 255, 1);
+    }
+
+    /* Confetti canvas */
+    #confetti-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    /* Note box styling */
+    .note-box {
+      background: white;
+      color: #333;
+      padding: 40px 30px;
+      border-radius: 25px;
+      box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.1);
+      max-width: 600px;
+      margin: 100px auto;
+      font-family: 'Poppins', sans-serif;
+      text-align: left;
+      z-index: 10;
+      position: relative;
+    }
+
+    .note-box h2 {
+      text-align: center;
+      color: #e91e63;
+      margin-bottom: 20px;
+      font-size: 2em;
+    }
+
+    .note-box p {
+      font-size: 1.1em;
+      line-height: 1.6;
+      margin-bottom: 15px;
+    }
+
+    .note-box strong {
+      color: #e91e63;
+    }
+
+    .note-box em {
+      color: #ff6ec4;
+    }
+
+    /* Button styling */
+    button {
+      background: #ff6ec4;
+      padding: 20px 50px;
+      color: white;
+      border: none;
+      border-radius: 35px;
+      font-size: 1.6em;
+      margin-top: 20px;
+      cursor: pointer;
+      box-shadow: 0px 5px 15px rgba(255, 110, 196, 0.5);
+      transition: transform 0.3s ease, background-color 0.3s ease;
+      font-weight: 700;
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    button:hover {
+      transform: scale(1.1);
+      background-color: #e255aa;
+    }
+
+    /* Hearts animation */
+    .hearts-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    .heart {
+      position: absolute;
+      color: #ff6b6b;
+      font-size: 20px;
+      animation: fall 4s linear infinite;
+    }
+
+    @keyframes fall {
+      0% {
+        transform: translateY(-100vh) rotate(0deg);
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(100vh) rotate(360deg);
+        opacity: 0;
+      }
+    }
+
+    .hidden {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <!-- Start overlay -->
+  <div class="start-overlay" id="startOverlay">
+    <div class="start-content">
+      <h2>🎉 Special Birthday Message 🎉</h2>
+      <p>Click To Read!</p>
+      <button class="start-button" onclick="startExperience()">Start the Magic ✨</button>
+    </div>
+  </div>
+
+  <!-- Background music -->
+  <audio id="bg-music" loop>
+    <source src="dream_ivory_-_welcome_and_goodbye_(FeelMP3.com).mp3" type="audio/mpeg">
+  </audio>
+
+  <!-- Music control button -->
+  <button class="music-control" id="musicControl" onclick="toggleMusic()">🎵</button>
+
+  <!-- Confetti canvas -->
+  <canvas id="confetti-canvas"></canvas>
+
+  <!-- Hearts container -->
+  <div class="hearts-container" id="heartsContainer"></div>
+
+  <!-- Note Box -->
+  <div class="note-box">
+    <h2>A Little Something From Me...</h2>
+    <p>
+      <strong>Dear Gondu,</strong>
+<br><br>
+Happy Birthday to one of the most Best Person in my life ❤
+<br><br>
+It's wild to think we've know each other since since 2021 — from sleepy late-night study calls, movie marathons, and  house parties, to just simply <em>existing</em> together… every moment has been nothing short of special. There's something about our bond — effortless, real, and quietly powerful — that I've always treasured.
+<br><br>
+You may not know this, but I met you at a strange point in my life, and unknowingly, you helped me find a version of myself I'm actually proud of today. You've always just been <em>you</em> — and that's more than enough. That's why you'll always have a very special place in my heart, with nothing but respect and warmth.
+<br><br>
+Honestly, just meeting you brightens my day. And I'll never get over how even our parents keep using us as references — "Be like her" or "Be like him" — maybe they knew before we did that this friendship was built to last.
+<br><br>
+On your birthday, I hope you feel <strong>loved, celebrated, nostalgic, and a little emotional</strong> — because you truly deserve all of it. Never forget how amazing you are. Keep being the light you unknowingly are to the people around you.
+<br><br>
+Wishing you laughter that makes your stomach hurt, dreams that come true, and days full of peace (and a little chaos, because you wouldn't be you without it 😄).
+<br><br>
+<strong>Happy Birthday, Gondu 🎂💫</strong>
+<br><br>
+    </p>
+    <p style="text-align:right">With all my heart,<br> —   Archit 💫</p>
+    <!-- Final Button -->
+    <button onclick="window.location.href='page6.html'">Final One 💖</button>
+  </div>
+
+  <script>
+    let musicPlaying = false;
+    let confettiSettings = { target: 'confetti-canvas' };
+    let confetti;
+
+    function startExperience() {
+      // Hide the start overlay
+      document.getElementById('startOverlay').classList.add('hidden');
+      
+      // Start music
+      const music = document.getElementById('bg-music');
+      music.play().then(() => {
+        musicPlaying = true;
+        updateMusicButton();
+      }).catch(e => {
+        console.log('Music autoplay failed:', e);
+      });
+      
+      // Start confetti
+      startConfetti();
+      
+      // Start hearts
+      startHearts();
+    }
+
+    function toggleMusic() {
+      const music = document.getElementById('bg-music');
+      if (musicPlaying) {
+        music.pause();
+        musicPlaying = false;
+      } else {
+        music.play().then(() => {
+          musicPlaying = true;
+        }).catch(e => {
+          console.log('Music play failed:', e);
+        });
+      }
+      updateMusicButton();
+    }
+
+    function updateMusicButton() {
+      const button = document.getElementById('musicControl');
+      button.textContent = musicPlaying ? '🎵' : '🔇';
+    }
+
+    function startConfetti() {
+      // Simple confetti effect
+      const canvas = document.getElementById('confetti-canvas');
+      const ctx = canvas.getContext('2d');
+      
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      
+      const confettiPieces = [];
+      const colors = ['#ff6ec4', '#e255aa', '#ffc3a0', '#ffafbd', '#ff6b6b'];
+      
+      for (let i = 0; i < 50; i++) {
+        confettiPieces.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height - canvas.height,
+          size: Math.random() * 10 + 5,
+          speed: Math.random() * 3 + 2,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          rotation: Math.random() * 360
+        });
+      }
+      
+      function animateConfetti() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        confettiPieces.forEach(piece => {
+          ctx.save();
+          ctx.translate(piece.x, piece.y);
+          ctx.rotate(piece.rotation * Math.PI / 180);
+          ctx.fillStyle = piece.color;
+          ctx.fillRect(-piece.size/2, -piece.size/2, piece.size, piece.size);
+          ctx.restore();
+          
+          piece.y += piece.speed;
+          piece.rotation += 2;
+          
+          if (piece.y > canvas.height) {
+            piece.y = -piece.size;
+            piece.x = Math.random() * canvas.width;
+          }
+        });
+        
+        requestAnimationFrame(animateConfetti);
+      }
+      
+      animateConfetti();
+    }
+
+    function startHearts() {
+      const heartsContainer = document.getElementById('heartsContainer');
+      
+      function createHeart() {
+        const heart = document.createElement('div');
+        heart.className = 'heart';
+        heart.innerHTML = '❤️';
+        heart.style.left = Math.random() * window.innerWidth + 'px';
+        heart.style.animationDuration = (Math.random() * 3 + 2) + 's';
+        
+        heartsContainer.appendChild(heart);
+        
+        setTimeout(() => {
+          heart.remove();
+        }, 5000);
+      }
+      
+      // Create hearts every 500ms
+      setInterval(createHeart, 500);
+    }
+
+    // Handle window resize
+    window.addEventListener('resize', () => {
+      const canvas = document.getElementById('confetti-canvas');
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    });
+  </script>
+</body>
+</html>

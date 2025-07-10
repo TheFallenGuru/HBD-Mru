@@ -1,0 +1,222 @@
+body {
+  margin: 0;
+  background: linear-gradient(to right, #ffc3a0, #ffafbd);
+  font-family: 'Poppins', sans-serif;
+  color: #fff;
+  text-align: center;
+  overflow-y: auto;       /* ✅ Allows vertical scrolling */
+  overflow-x: hidden;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Center container styling - bigger padding & max-width to contain content nicely */
+.centered {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 40px 20px;
+  box-sizing: border-box;
+  position: relative;
+  z-index: 10;
+  max-width: 500px;
+}
+
+/* Bigger heading font size, bold, with some shadow for better visibility */
+.centered h1 {
+  font-size: 1.8rem;
+  font-weight: 500;
+  color: #e91e63;
+  margin: 0 0 15px 0;
+  text-shadow: 1px 1px 8px rgba(255, 255, 255, 0.7);
+}
+
+/* Paragraph bigger and lighter color */
+.centered p {
+  font-size: 1.6rem;
+  margin: 0 0 30px 0;
+  color: #da4e08cc;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+/* Button styling - bigger font and padding, softer shadows */
+button {
+  background: #ff6ec4;
+  padding: 20px 50px;
+  color: white;
+  border: none;
+  border-radius: 35px;
+  font-size: 1.6em;
+  margin-top: 20px;
+  cursor: pointer;
+  box-shadow: 0px 5px 15px rgba(255, 110, 196, 0.5);
+  transition: transform 0.3s ease, background-color 0.3s ease;
+  font-weight: 700;
+}
+
+button:hover {
+  transform: scale(1.1);
+  background-color: #e255aa;
+}
+
+/* Confetti canvas stays behind everything */
+#confetti-canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* Gallery styling with spacing below for button */
+.gallery {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+  padding: 40px;
+  margin-bottom: 80px;  /* ✅ Space for the button */
+}
+
+.gallery img {
+  width: 100%;
+  max-width: 250px;
+  height: auto;
+  border-radius: 20px;
+  transition: transform 0.3s ease;
+  object-fit: contain;
+}
+
+.gallery img:hover {
+  transform: scale(1.1);
+}
+
+.photo, .media {
+  width: 100%;
+  max-width: 700px;
+  height: auto;
+  border-radius: 25px;
+  margin-top: 30px;
+  object-fit: contain;
+}
+
+.big-text {
+  font-size: 28px;
+  color: #e74c3c;
+  font-weight: bold;
+  margin-top: 10px;
+}
+
+input[type="date"] {
+  font-size: 18px;
+  padding: 8px;
+  border-radius: 8px;
+  border: none;
+  outline: none;
+  margin-top: 20px;
+}
+
+.heart {
+  position: fixed;
+  top: -20px;
+  background: url('https://cdn-icons-png.flaticon.com/512/833/833472.png') no-repeat center;
+  background-size: cover;
+  animation: fall linear;
+  z-index: 999;
+  pointer-events: none;
+}
+
+@keyframes fall {
+  to {
+    transform: translateY(100vh);
+    opacity: 0;
+  }
+}
+
+.responsive {
+  max-width: 90vw;
+  height: auto;
+  border-radius: 25px;
+  margin-top: 30px;
+  object-fit: contain;
+}
+
+.media.responsive {
+  max-height: 70vh;
+  width: auto;
+}
+
+.polaroid-gallery {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(4, auto);
+  gap: 30px;
+  padding: 40px 20px 10px 20px; /* ↓ Reduced bottom padding */
+  justify-items: center;
+}
+
+
+
+.polaroid {
+  background-color: white;
+  padding: 10px;
+  border: 2px solid #ddd;
+  border-radius: 10px;
+  box-shadow: 3px 3px 5px rgba(0,0,0,0.2);
+  text-align: center;
+  width: 180px;
+  font-family: 'Comic Sans MS', cursive;
+}
+
+.polaroid-img {
+  width: 100%;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  margin-bottom: 8px;
+}
+
+.caption {
+  font-size: 14px;
+  color: #333;
+  margin-top: 5px;
+}
+
+.video-polaroid {
+  max-width: 90vw;
+  width: 600px;
+  margin-top: 30px;
+}
+
+.polaroid-video {
+  width: 100%;
+  height: auto; /* This preserves the aspect ratio */
+  max-height: none; /* Remove the max height constraint */
+  object-fit: contain; /* Ensures the whole video is visible without cropping */
+}
+
+.note-box {
+  background: white;
+  color: #333;
+  padding: 40px 30px;
+  border-radius: 25px;
+  box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.1);
+  max-width: 600px;
+  margin: 100px auto;
+  font-family: 'Poppins', sans-serif;
+  text-align: left;
+  z-index: 10;
+}
+
+.note-box h2 {
+  text-align: center;
+  color: #e91e63;
+  margin-bottom: 20px;
+}

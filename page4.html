@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Gallery ✨</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      background: linear-gradient(to right, #ffc3a0, #ffafbd);
+      font-family: 'Poppins', sans-serif;
+      color: #fff;
+      text-align: center;
+      overflow-y: auto;
+      overflow-x: hidden;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    /* Start overlay for music permission */
+    .start-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      backdrop-filter: blur(5px);
+    }
+
+    .start-content {
+      text-align: center;
+      color: white;
+      padding: 40px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 20px;
+      backdrop-filter: blur(10px);
+    }
+
+    .start-content h2 {
+      font-size: 2em;
+      margin-bottom: 20px;
+      color: #ffc3a0;
+    }
+
+    .start-content p {
+      font-size: 1.2em;
+      margin-bottom: 30px;
+      opacity: 0.9;
+    }
+
+    .start-button {
+      background: linear-gradient(45deg, #ff6ec4, #e255aa);
+      color: white;
+      border: none;
+      padding: 20px 40px;
+      border-radius: 50px;
+      font-size: 1.3em;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 10px 20px rgba(255, 110, 196, 0.3);
+      animation: pulse 2s infinite;
+      font-weight: 600;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+
+    .start-button:hover {
+      transform: scale(1.1);
+      box-shadow: 0 15px 30px rgba(255, 110, 196, 0.5);
+    }
+
+    /* Music Control Button Styles */
+    .music-control {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 1000;
+    }
+
+    .music-control button {
+      padding: 10px 15px;
+      font-size: 16px;
+      border: none;
+      background-color: #ffcccb;
+      border-radius: 8px;
+      cursor: pointer;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      transition: background-color 0.3s ease;
+    }
+
+    .music-control button:hover {
+      background-color: #ffb6b5;
+    }
+
+    /* Confetti canvas */
+    #confetti-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    /* Gallery styling */
+    .polaroid-gallery {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      grid-template-rows: repeat(4, auto);
+      gap: 30px;
+      padding: 40px 20px 10px 20px;
+      justify-items: center;
+      position: relative;
+      z-index: 10;
+    }
+
+    .polaroid {
+      background-color: white;
+      padding: 10px;
+      border: 2px solid #ddd;
+      border-radius: 10px;
+      box-shadow: 3px 3px 5px rgba(0,0,0,0.2);
+      text-align: center;
+      width: 180px;
+      font-family: 'Comic Sans MS', cursive;
+      transition: transform 0.3s ease;
+    }
+
+    .polaroid:hover {
+      transform: scale(1.05);
+    }
+
+    .polaroid-img {
+      width: 100%;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      margin-bottom: 8px;
+    }
+
+    .caption {
+      font-size: 14px;
+      color: #333;
+      margin-top: 5px;
+    }
+
+    .video-polaroid {
+      max-width: 90vw;
+      width: 600px;
+      margin-top: 30px;
+    }
+
+    .polaroid-video {
+      width: 100%;
+      height: auto;
+      max-height: none;
+      object-fit: contain;
+    }
+
+    /* Centered container for final button */
+    .centered {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 40px 20px;
+      box-sizing: border-box;
+      position: relative;
+      z-index: 10;
+      max-width: 500px;
+    }
+
+    /* Button styling */
+    button {
+      background: #ff6ec4;
+      padding: 20px 50px;
+      color: white;
+      border: none;
+      border-radius: 35px;
+      font-size: 1.6em;
+      margin-top: 20px;
+      cursor: pointer;
+      box-shadow: 0px 5px 15px rgba(255, 110, 196, 0.5);
+      transition: transform 0.3s ease, background-color 0.3s ease;
+      font-weight: 700;
+    }
+
+    button:hover {
+      transform: scale(1.1);
+      background-color: #e255aa;
+    }
+
+    /* Hearts animation */
+    .hearts-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    .heart {
+      position: absolute;
+      color: #ff6b6b;
+      font-size: 20px;
+      animation: fall 4s linear infinite;
+    }
+
+    @keyframes fall {
+      0% {
+        transform: translateY(-100vh) rotate(0deg);
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(100vh) rotate(360deg);
+        opacity: 0;
+      }
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    /* Mobile responsiveness */
+    @media (max-width: 768px) {
+      .polaroid-gallery {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+        padding: 20px 10px;
+      }
+      
+      .polaroid {
+        width: 150px;
+      }
+      
+      .video-polaroid {
+        width: 100%;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .polaroid-gallery {
+        grid-template-columns: 1fr;
+        gap: 20px;
+      }
+      
+      .polaroid {
+        width: 200px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Start overlay -->
+  <div class="start-overlay" id="startOverlay">
+    <div class="start-content">
+      <h2>✨ Memory Gallery ✨</h2>
+      <p>Click below to view our memories!</p>
+      <button class="start-button" onclick="startExperience()">Start the Gallery 🎵</button>
+    </div>
+  </div>
+
+  <!-- Background Music -->
+  <audio loop hidden id="bg-music">
+    <source src="Pixies - Where Is My Mind.mp3" type="audio/mpeg">
+  </audio>
+
+  <!-- Music Toggle Button -->
+  <div class="music-control">
+    <button id="music-toggle" onclick="toggleMusic()">Pause Music ⏸️</button>
+  </div>
+
+  <!-- Confetti Canvas -->
+  <canvas id="confetti-canvas"></canvas>
+
+  <!-- Hearts container -->
+  <div class="hearts-container" id="heartsContainer"></div>
+
+  <!-- 4x3 Polaroid Grid: 9 Images + 3 Videos -->
+  <div class="polaroid-gallery">
+    <!-- Row 1 (Photos) -->
+    <div class="polaroid">
+      <img src="5.jpg" class="polaroid-img" alt="Memory 1" />
+      <p class="caption">Smiles that glow ☀️</p>
+    </div>
+    <div class="polaroid">
+      <img src="6.jpg" class="polaroid-img" alt="Memory 2" />
+      <p class="caption">Hugs and giggles 🤗</p>
+    </div>
+    <div class="polaroid">
+      <img src="7.jpg" class="polaroid-img" alt="Memory 3" />
+      <p class="caption">Goofy face squad 😝</p>
+    </div>
+
+    <!-- Row 2 (Photos) -->
+    <div class="polaroid">
+      <img src="8.jpg" class="polaroid-img" alt="Memory 4" />
+      <p class="caption">Peaceful vibes 🕊️</p>
+    </div>
+    <div class="polaroid">
+      <img src="9.jpg" class="polaroid-img" alt="Memory 5" />
+      <p class="caption">Sunset moments 🌇</p>
+    </div>
+    <div class="polaroid">
+      <img src="10.jpg" class="polaroid-img" alt="Memory 6" />
+      <p class="caption">BFF energy 💕</p>
+    </div>
+
+    <!-- Row 3 (Photos) -->
+    <div class="polaroid">
+      <img src="11.jpg" class="polaroid-img" alt="Memory 7" />
+      <p class="caption">Candid magic 🎞️</p>
+    </div>
+    <div class="polaroid">
+      <img src="12.jpg" class="polaroid-img" alt="Memory 8" />
+      <p class="caption">Wanderlust walks 🚶‍♀️</p>
+    </div>
+    <div class="polaroid">
+      <img src="13.jpg" class="polaroid-img" alt="Memory 9" />
+      <p class="caption">Insta-perfect 💫</p>
+    </div>
+
+    <!-- Row 4 (Videos) -->
+    <div class="polaroid video-polaroid">
+      <video controls class="polaroid-video">
+        <source src="v3.mp4" type="video/mp4" />
+        Your browser does not support the video tag.
+      </video>
+      <p class="caption">Us being dramatic 😆</p>
+    </div>
+    <div class="polaroid video-polaroid">
+      <video controls class="polaroid-video">
+        <source src="v4.mp4" type="video/mp4" />
+        Your browser does not support the video tag.
+      </video>
+      <p class="caption">Best reaction ever 😮</p>
+    </div>
+    <div class="polaroid video-polaroid">
+      <video controls class="polaroid-video">
+        <source src="v5.mp4" type="video/mp4" />
+        Your browser does not support the video tag.
+      </video>
+      <p class="caption">That goofy dance 🕺</p>
+    </div>
+  </div>
+
+  <!-- Final Button -->
+  <div class="centered">
+    <button onclick="window.location.href='page5.html'">Final Note 💌</button>
+  </div>
+
+  <script>
+    let musicPlaying = false;
+    const bgMusic = document.getElementById("bg-music");
+    const toggleBtn = document.getElementById("music-toggle");
+
+    function startExperience() {
+      // Hide the start overlay
+      document.getElementById('startOverlay').classList.add('hidden');
+      
+      // Start music
+      bgMusic.play().then(() => {
+        musicPlaying = true;
+        toggleBtn.textContent = "Pause Music ⏸️";
+      }).catch(e => {
+        console.log('Music autoplay failed:', e);
+      });
+      
+      // Start confetti
+      startConfetti();
+      
+      // Start hearts
+      startHearts();
+    }
+
+    function toggleMusic() {
+      if (bgMusic.paused) {
+        bgMusic.play().then(() => {
+          musicPlaying = true;
+          toggleBtn.textContent = "Pause Music ⏸️";
+        }).catch(e => {
+          console.log('Music play failed:', e);
+        });
+      } else {
+        bgMusic.pause();
+        musicPlaying = false;
+        toggleBtn.textContent = "Play Music ▶️";
+      }
+    }
+
+    function startConfetti() {
+      // Simple confetti effect
+      const canvas = document.getElementById('confetti-canvas');
+      const ctx = canvas.getContext('2d');
+      
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      
+      const confettiPieces = [];
+      const colors = ['#ff6ec4', '#e255aa', '#ffc3a0', '#ffafbd', '#ff6b6b'];
+      
+      for (let i = 0; i < 50; i++) {
+        confettiPieces.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height - canvas.height,
+          size: Math.random() * 10 + 5,
+          speed: Math.random() * 3 + 2,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          rotation: Math.random() * 360
+        });
+      }
+      
+      function animateConfetti() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        confettiPieces.forEach(piece => {
+          ctx.save();
+          ctx.translate(piece.x, piece.y);
+          ctx.rotate(piece.rotation * Math.PI / 180);
+          ctx.fillStyle = piece.color;
+          ctx.fillRect(-piece.size/2, -piece.size/2, piece.size, piece.size);
+          ctx.restore();
+          
+          piece.y += piece.speed;
+          piece.rotation += 2;
+          
+          if (piece.y > canvas.height) {
+            piece.y = -piece.size;
+            piece.x = Math.random() * canvas.width;
+          }
+        });
+        
+        requestAnimationFrame(animateConfetti);
+      }
+      
+      animateConfetti();
+    }
+
+    function startHearts() {
+      const heartsContainer = document.getElementById('heartsContainer');
+      
+      function createHeart() {
+        const heart = document.createElement('div');
+        heart.className = 'heart';
+        heart.innerHTML = '❤️';
+        heart.style.left = Math.random() * window.innerWidth + 'px';
+        heart.style.animationDuration = (Math.random() * 3 + 2) + 's';
+        
+        heartsContainer.appendChild(heart);
+        
+        setTimeout(() => {
+          heart.remove();
+        }, 5000);
+      }
+      
+      // Create hearts every 800ms
+      setInterval(createHeart, 800);
+    }
+
+    // Handle window resize
+    window.addEventListener('resize', () => {
+      const canvas = document.getElementById('confetti-canvas');
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    });
+  </script>
+</body>
+</html>
